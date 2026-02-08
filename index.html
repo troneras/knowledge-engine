@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Knowledge Engine — Turn every Jira ticket and merge request into permanent system intelligence.">
+    <title>Knowledge Engine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --amber-terminal: #d4850a;
+            --amber-glow: #f59e0b;
+            --amber-dim: #92610a;
+            --amber-faint: #3d2a06;
+            --black-pure: #000000;
+            --black-deep: #050505;
+            --black-card: #0a0a0a;
+            --black-border: #1a1a1a;
+            --black-muted: #111111;
+            --text-primary: #e5e5e5;
+            --text-secondary: #a3a3a3;
+            --text-dim: #737373;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            background: var(--black-pure);
+        }
+
+        body {
+            font-family: 'IBM Plex Mono', 'Fira Code', Menlo, monospace;
+            background: var(--black-pure);
+            color: var(--text-secondary);
+            line-height: 1.7;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        ::selection {
+            background: var(--amber-terminal);
+            color: var(--black-pure);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--black-deep);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--black-border);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #333;
+        }
+
+        /* Scanline overlay */
+        .scanline-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.03) 2px,
+                rgba(0, 0, 0, 0.03) 4px
+            );
+        }
+
+        /* Noise texture */
+        .noise-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Glow effects */
+        .text-glow {
+            text-shadow: 0 0 10px rgba(212, 133, 10, 0.3), 0 0 40px rgba(212, 133, 10, 0.1);
+        }
+        
+        .text-glow-strong {
+            text-shadow: 0 0 10px rgba(212, 133, 10, 0.5), 0 0 30px rgba(212, 133, 10, 0.2), 0 0 60px rgba(212, 133, 10, 0.1);
+        }
+
+        .line-glow {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(212, 133, 10, 0.4) 20%, rgba(212, 133, 10, 0.4) 80%, transparent);
+            box-shadow: 0 0 8px rgba(212, 133, 10, 0.15);
+        }
+
+        /* Layout */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        section {
+            padding: 80px 0;
+            position: relative;
+        }
+
+        /* Typography */
+        h1, h2, h3 {
+            font-family: 'Space Mono', 'IBM Plex Mono', monospace;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        h2 {
+            font-size: clamp(1.25rem, 3vw, 1.75rem);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--amber-terminal);
+        }
+
+        h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        p {
+            margin-bottom: 1.25rem;
+            font-size: 1rem;
+        }
+
+        .text-dim {
+            color: var(--text-dim);
+        }
+
+        .text-terminal {
+            color: var(--amber-terminal);
+        }
+
+        /* Prompt prefix */
+        .prompt::before {
+            content: '$ ';
+            color: var(--amber-terminal);
+            opacity: 0.6;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            border: 1px solid var(--amber-terminal);
+            background: transparent;
+            color: var(--amber-terminal);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            background: var(--amber-terminal);
+            color: var(--black-pure);
+            box-shadow: 0 0 20px rgba(212, 133, 10, 0.3);
+        }
+
+        .btn-primary {
+            background: var(--amber-terminal);
+            color: var(--black-pure);
+        }
+
+        .btn-primary:hover {
+            background: var(--amber-glow);
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.4);
+        }
+
+        /* Forms */
+        .form-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        input[type="email"] {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px 16px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            background: var(--black-card);
+            border: 1px solid var(--black-border);
+            color: var(--text-primary);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="email"]:focus {
+            border-color: var(--amber-terminal);
+        }
+
+        input[type="email"]::placeholder {
+            color: var(--text-dim);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--black-card);
+            border: 1px solid var(--black-border);
+            padding: 32px;
+            position: relative;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--amber-faint), transparent);
+        }
+
+        /* Grid */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+        }
+
+        /* Lists */
+        ul {
+            list-style: none;
+        }
+
+        ul li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        ul li::before {
+            content: '>';
+            position: absolute;
+            left: 0;
+            color: var(--amber-terminal);
+            opacity: 0.6;
+        }
+
+        /* Sections specific */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 120px 0;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: var(--amber-terminal);
+            border: 1px solid var(--amber-faint);
+            padding: 6px 12px;
+            margin-bottom: 2rem;
+            width: fit-content;
+        }
+
+        .hero-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--amber-terminal);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .hero h1 {
+            margin-bottom: 1.5rem;
+        }
+
+        .hero p {
+            font-size: 1.125rem;
+            max-width: 600px;
+            margin-bottom: 2rem;
+        }
+
+        .hero-cta {
+            margin-top: 1rem;
+        }
+
+        /* Problem section */
+        .problem-list li {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .problem-list li::before {
+            content: '?';
+            opacity: 0.8;
+        }
+
+        /* What this is */
+        .not-is-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+        }
+
+        @media (max-width: 640px) {
+            .not-is-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .not-list li::before {
+            content: '✗';
+            color: var(--text-dim);
+            opacity: 0.6;
+        }
+
+        .is-list li::before {
+            content: '✓';
+            color: var(--amber-terminal);
+            opacity: 1;
+        }
+
+        /* Benefits */
+        .benefit-item {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 1.5rem;
+        }
+
+        .benefit-number {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--amber-terminal);
+            opacity: 0.6;
+            min-width: 24px;
+        }
+
+        /* CTA Section */
+        .cta-box {
+            text-align: center;
+            padding: 48px 32px;
+        }
+
+        .cta-box h2 {
+            margin-bottom: 1rem;
+        }
+
+        .cta-box p {
+            max-width: 500px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: 48px 0;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            border-top: 1px solid var(--black-border);
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        .delay-3 { transition-delay: 0.3s; }
+
+        /* Status badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-dim);
+            padding: 8px 16px;
+            background: var(--black-muted);
+            border: 1px solid var(--black-border);
+        }
+
+        .status-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--amber-terminal);
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="scanline-overlay"></div>
+    
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge fade-in">Private Beta</div>
+            <h1 class="fade-in delay-1 text-glow-strong">Engineering Knowledge<br>That Doesn't Rot</h1>
+            <p class="fade-in delay-2">
+                Turn every Jira ticket and merge request into permanent system intelligence. 
+                Not docs. Not copilots. A living memory of how your software actually works.
+            </p>
+            <div class="hero-cta fade-in delay-3">
+                <a href="#waitlist" class="btn btn-primary">Join the private waitlist →</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="line-glow"></div>
+
+    <!-- Sub-headline -->
+    <section>
+        <div class="container">
+            <p class="fade-in" style="font-size: 1.25rem; color: var(--text-primary); max-width: 700px;">
+                Most engineering organizations lose critical knowledge every week. 
+                People leave. Context disappears. Six months later, the same mistakes are repeated — 
+                slower, riskier, and with more fear.
+            </p>
+            <p class="fade-in delay-1" style="margin-top: 1.5rem;">
+                We're building the missing layer: <span class="text-terminal">a system-of-record for engineering decisions.</span>
+            </p>
+        </div>
+    </section>
+
+    <div class="line-glow"></div>
+
+    <!-- Problem -->
+    <section>
+        <div class="container">
+            <h2 class="fade-in">If this feels familiar, you're the target:</h2>
+            <ul class="problem-list fade-in delay-1">
+                <li>"Why is this implemented like this?"</li>
+                <li>"Didn't we already solve this before?"</li>
+                <li>"Who owns this part of the system?"</li>
+                <li>"What breaks if I touch this?"</li>
+                <li>"Why does onboarding take months?"</li>
+            </ul>
+            <p class="fade-in delay-2" style="margin-top: 2rem; font-size: 1.125rem; color: var(--text-primary);">
+                Your code hasn't changed. <span class="text-dim">Your understanding has decayed.</span>
+            </p>
+        </div>
+    </section>
+
+    <div class="line-glow"></div>
+
+    <!-- What This Is -->
+    <section>
+        <div class="container">
+            <div class="not-is-grid">
+                <div class="fade-in">
+                    <h3 style="color: var(--text-dim); margin-bottom: 1.5rem;">This is NOT:</h3>
+                    <ul class="not-list">
+                        <li>A documentation tool</li>
+                        <li>A copilot</li>
+                        <li>An autonomous coding agent</li>
+                    </ul>
+                </div>
+                <div class="fade-in delay-1">
+                    <h3 style="color: var(--amber-terminal); margin-bottom: 1.5rem;">This IS:</h3>
+                    <ul class="is-list">
+                        <li>Observes real work (tickets, MRs, code)</li>
+                        <li>Extracts the decision logic behind changes</li>
+                        <li>Builds a structured, queryable system memory</li>
+                        <li>Feeds accurate context to humans and AI tools</li>
+                    </ul>
+                </div>
+            </div>
+            <p class="fade-in delay-2" style="margin-top: 3rem; font-size: 1.125rem; text-align: center;">
+                <span class="prompt text-terminal">Think: grep — but for engineering judgment.</span>
+            </p>
+        </div>
+    </section>
+
+    <div class="line-glow"></div>
+
+    <!-- Why It Matters -->
+    <section>
+        <div class="container">
+            <h2 class="fade-in">Why It Matters</h2>
+            <p class="fade-in delay-1" style="margin-bottom: 2rem;">
+                Teams with strong system memory:
+            </p>
+            <div class="fade-in delay-2">
+                <div class="benefit-item">
+                    <span class="benefit-number">01</span>
+                    <p>Ship faster with less fear</p>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-number">02</span>
+                    <p>Onboard engineers in weeks, not months</p>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-number">03</span>
+                    <p>Depend less on a few burned-out seniors</p>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-number">04</span>
+                    <p>Make safer changes to legacy systems</p>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-number">05</span>
+                    <p>Stop re-learning the same lessons</p>
+                </div>
+            </div>
+            <p class="fade-in delay-3" style="margin-top: 2rem; font-size: 1.125rem; color: var(--text-primary);">
+                This isn't about moving faster. <span class="text-dim">It's about knowing what you're doing.</span>
+            </p>
+        </div>
+    </section>
+
+    <div class="line-glow"></div>
+
+    <!-- Who This Is For -->
+    <section>
+        <div class="container">
+            <h2 class="fade-in">Who This Is For</h2>
+            <div class="grid-2 fade-in delay-1">
+                <div>
+                    <ul>
+                        <li>Engineering leaders</li>
+                        <li>Platform / Core teams</li>
+                    </ul>
+                </div>
+                <div>
+                    <p class="text-dim" style="font-size: 0.9rem; margin-bottom: 1rem;">Companies with:</p>
+                    <ul>
+                        <li>Multiple repos</li>
+                        <li>Legacy systems</li>
+                        <li>High bus factor</li>
+                        <li>Regulated environments</li>
+                    </ul>
+                </div>
+            </div>
+            <p class="fade-in delay-2" style="margin-top: 2rem; font-size: 1.125rem;">
+                <span class="text-terminal">If your system has history, this is for you.</span>
+            </p>
+        </div>
+    </section>
+
+    <div class="line-glow"></div>
+
+    <!-- Status -->
+    <section>
+        <div class="container">
+            <div class="card cta-box fade-in">
+                <span class="status-badge" style="margin-bottom: 1.5rem;">Current Status</span>
+                <h2>Private Internal Pilots</h2>
+                <p>
+                    No public demos yet. No marketing launch. Limited early access.
+                </p>
+                <p style="font-size: 0.9rem; color: var(--text-dim);">
+                    We're collecting interest from teams who already feel this pain, 
+                    want to help shape the product, and are willing to start read-only.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <div class="line-glow"></div>
+
+    <!-- CTA -->
+    <section id="waitlist">
+        <div class="container">
+            <div class="card cta-box fade-in">
+                <h2>Join the Waitlist</h2>
+                <p>
+                    Leave your email if you want early access updates.<br>
+                    <span style="font-size: 0.9rem; color: var(--text-dim);">No spam. No sales pitch. We'll only reach out if it's a fit.</span>
+                </p>
+                <form class="form-group" style="justify-content: center;" onsubmit="handleSubmit(event)">
+                    <input type="email" placeholder="your@email.com" required>
+                    <button type="submit" class="btn btn-primary">Join waitlist</button>
+                </form>
+                <p id="form-message" style="margin-top: 1rem; font-size: 0.9rem; display: none;"></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>Built by engineers who work daily inside large, legacy, multi-repo systems.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Form submission handler
+        function handleSubmit(e) {
+            e.preventDefault();
+            const email = e.target.querySelector('input[type="email"]').value;
+            const message = document.getElementById('form-message');
+            
+            // Here you would typically send to your backend
+            // For now, show a success message
+            message.textContent = 'Thanks. We\'ll be in touch if it\'s a fit.';
+            message.style.display = 'block';
+            message.style.color = 'var(--amber-terminal)';
+            
+            e.target.reset();
+            
+            // In production, replace with actual API call:
+            // fetch('/api/waitlist', { method: 'POST', body: JSON.stringify({ email }) })
+        }
+    </script>
+</body>
+</html>
