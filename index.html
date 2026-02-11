@@ -3,14 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Knowledge Engine — I extract the tribal knowledge from your codebase into a structured knowledge base your AI tools can navigate. No interviews. No effort from your team.">
-    <meta property="og:title" content="Knowledge Engine — Engineering knowledge that doesn't rot">
-    <meta property="og:description" content="Your codebase has 10 years of tribal knowledge buried in commits and tickets. I extract it overnight.">
+    <title>Knowledge Engine — Extract tribal knowledge from your codebase overnight</title>
+    <meta name="description" content="I extract the tribal knowledge buried in your commits and tickets into a structured knowledge base your AI coding tools can navigate. No interviews. No developer effort. Delivered in 5 business days.">
+    <link rel="canonical" href="https://troneras.github.io/knowledge-engine/">
+    <meta property="og:title" content="Knowledge Engine — Extract tribal knowledge from your codebase overnight">
+    <meta property="og:description" content="Your codebase has years of tribal knowledge buried in commits and tickets. I extract it into a structured knowledge base in 5 business days. Zero developer effort.">
     <meta property="og:type" content="website">
-    <title>Knowledge Engine</title>
+    <meta property="og:url" content="https://troneras.github.io/knowledge-engine/">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Knowledge Engine — Extract tribal knowledge from your codebase overnight">
+    <meta name="twitter:description" content="Your codebase has years of tribal knowledge buried in commits and tickets. I extract it into a structured knowledge base in 5 business days.">
+    <meta name="robots" content="index, follow">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ProfessionalService",
+        "name": "Knowledge Engine",
+        "description": "Codebase knowledge extraction service that turns tribal knowledge from commits and tickets into structured knowledge bases for AI coding tools.",
+        "url": "https://troneras.github.io/knowledge-engine/",
+        "email": "knowledge@troneras.com",
+        "priceRange": "5000-10000 EUR",
+        "areaServed": "Worldwide",
+        "serviceType": "Codebase Knowledge Extraction",
+        "knowsAbout": ["Legacy code documentation", "AI coding tools", "Knowledge management", "Developer onboarding"],
+        "offers": [
+            {
+                "@type": "Offer",
+                "name": "Initial Knowledge Extraction",
+                "description": "Full knowledge base delivered in 5 business days with team walkthrough",
+                "price": "5000",
+                "priceCurrency": "EUR",
+                "priceSpecification": {
+                    "@type": "PriceSpecification",
+                    "price": "5000",
+                    "minPrice": "5000",
+                    "maxPrice": "10000",
+                    "priceCurrency": "EUR"
+                }
+            },
+            {
+                "@type": "Offer",
+                "name": "Monthly Knowledge Refresh",
+                "description": "Monthly re-extraction to capture new development activity",
+                "price": "500",
+                "priceCurrency": "EUR",
+                "priceSpecification": {
+                    "@type": "PriceSpecification",
+                    "price": "500",
+                    "minPrice": "500",
+                    "maxPrice": "1000",
+                    "priceCurrency": "EUR"
+                }
+            }
+        ]
+    }
+    </script>
+
     <style>
         *, *::before, *::after {
             box-sizing: border-box;
@@ -206,6 +260,67 @@
             opacity: 0.6;
         }
 
+        /* Nav */
+        .site-nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 50;
+            padding: 16px 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--black-border);
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .site-nav.visible {
+            transform: translateY(0);
+        }
+
+        .nav-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--amber-terminal);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--amber-terminal);
+        }
+
+        .nav-links .btn {
+            padding: 8px 16px;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 640px) {
+            .nav-links a:not(.btn) { display: none; }
+        }
+
         /* Hero */
         .hero {
             min-height: 100vh;
@@ -387,6 +502,129 @@
             mix-blend-mode: multiply;
         }
 
+        /* Scroll progress bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0; left: 0;
+            width: 0%;
+            height: 2px;
+            background: var(--amber-terminal);
+            box-shadow: 0 0 8px rgba(212, 133, 10, 0.5);
+            z-index: 60;
+            transition: width 0.05s linear;
+        }
+
+        /* Blinking cursor */
+        .cursor-blink::after {
+            content: '\2588';
+            animation: blink 1s step-end infinite;
+            color: var(--amber-terminal);
+            opacity: 0.8;
+            margin-left: 0.05em;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 0; }
+        }
+
+        /* Card hover */
+        .card {
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: var(--amber-faint);
+            box-shadow: 0 4px 24px rgba(212, 133, 10, 0.08);
+        }
+
+        /* Terminal window chrome */
+        .terminal-window {
+            background: var(--black-card);
+            border: 1px solid var(--black-border);
+            overflow: hidden;
+        }
+
+        .terminal-titlebar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: var(--black-deep);
+            border-bottom: 1px solid var(--black-border);
+        }
+
+        .terminal-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--black-border);
+        }
+
+        .terminal-dot:first-child { background: #ef4444; opacity: 0.6; }
+        .terminal-dot:nth-child(2) { background: #f59e0b; opacity: 0.6; }
+        .terminal-dot:nth-child(3) { background: #22c55e; opacity: 0.6; }
+
+        .terminal-title {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-left: 8px;
+        }
+
+        .terminal-window .terminal-block {
+            border: none;
+        }
+
+        /* FAQ collapsible */
+        .faq-item details {
+            width: 100%;
+        }
+
+        .faq-item summary {
+            font-family: 'Space Mono', monospace;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 0;
+            padding: 4px 0;
+            transition: color 0.2s;
+        }
+
+        .faq-item summary::-webkit-details-marker { display: none; }
+        .faq-item summary::marker { display: none; content: ''; }
+
+        .faq-item summary::before {
+            content: '>';
+            color: var(--amber-terminal);
+            opacity: 0.6;
+            margin-right: 0.75rem;
+            transition: transform 0.2s ease;
+            display: inline-block;
+        }
+
+        .faq-item details[open] summary::before {
+            transform: rotate(90deg);
+        }
+
+        .faq-item summary:hover {
+            color: var(--amber-terminal);
+        }
+
+        .faq-answer {
+            padding-left: 1.5rem;
+            padding-top: 0.75rem;
+            animation: faq-reveal 0.25s ease;
+        }
+
+        @keyframes faq-reveal {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         /* Animations */
         .fade-in {
             opacity: 0;
@@ -412,152 +650,200 @@
         .terminal-block .comment { color: var(--text-dim); }
         .terminal-block .path { color: var(--amber-terminal); }
         .terminal-block .arrow { color: var(--text-dim); }
+
+        /* FAQ */
+        .faq-item {
+            border-bottom: 1px solid var(--black-border);
+            padding: 24px 0;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-answer {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .faq-answer p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Inline CTA */
+        .inline-cta {
+            text-align: center;
+            margin: 3rem 0 0;
+            padding: 2rem 0;
+        }
     </style>
 </head>
 <body>
-    <div class="scanline-overlay"></div>
+    <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+    <div class="scanline-overlay" aria-hidden="true"></div>
 
-    <!-- Hero -->
-    <section class="hero">
-        <div class="hero-shader" id="hero-shader-bg"></div>
-        <div class="container">
-            <div class="logo-mark fade-in" id="logo-shader"></div>
-            <div class="hero-badge fade-in">Accepting clients</div>
-            <h1 class="fade-in delay-1 text-glow-strong">Your codebase knows<br>more than your team does.</h1>
-            <p class="fade-in delay-2">
-                Every bug fix, every merge request, every "why is it done this way" —
-                it's all in the commit history. I extract it into a structured knowledge base
-                that your AI tools can navigate. No interviews. No effort from your team.
-            </p>
-            <div class="hero-cta fade-in delay-3">
-                <a href="#contact" class="btn btn-primary">Book a discovery call</a>
-                <a href="#proof" class="btn">See the proof</a>
+    <!-- Nav (appears on scroll) -->
+    <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <div class="nav-inner">
+            <a href="#" class="nav-brand">Knowledge Engine</a>
+            <div class="nav-links">
+                <a href="#how">How it works</a>
+                <a href="#proof">Proof</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#contact" class="btn btn-primary">Book a call</a>
             </div>
         </div>
-    </section>
+    </nav>
 
-    <div class="line-glow"></div>
-
-    <!-- Problem -->
-    <section>
-        <div class="container">
-            <h2 class="fade-in">The problem nobody budgets for</h2>
-            <p class="fade-in delay-1" style="font-size: 1.125rem; color: var(--text-primary); max-width: 700px;">
-                Your senior devs carry a decade of context in their heads.
-                When they leave, that context leaves with them.
-                When they're on vacation, the team slows down.
-                When a new hire joins, onboarding takes months.
-            </p>
-            <p class="fade-in delay-2" style="margin-top: 1.5rem;">
-                Documentation doesn't fix this. Wikis rot. Confluence pages from 2021 describe a system
-                that no longer exists. <span class="text-terminal">The knowledge isn't lost — it's buried in
-                thousands of tickets and commits that no human has time to read.</span>
-            </p>
-        </div>
-    </section>
-
-    <div class="line-glow"></div>
-
-    <!-- What I deliver -->
-    <section>
-        <div class="container">
-            <h2 class="fade-in">What you get</h2>
-            <div class="not-is-grid fade-in delay-1">
-                <div>
-                    <h3 style="color: var(--text-dim); margin-bottom: 1.5rem;">Not this:</h3>
-                    <ul class="not-list">
-                        <li>A tool you have to learn and maintain</li>
-                        <li>Auto-generated docs nobody reads</li>
-                        <li>A chatbot that hallucinates about your code</li>
-                        <li>Weeks of developer interviews</li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 style="color: var(--amber-terminal); margin-bottom: 1.5rem;">This:</h3>
-                    <ul class="is-list">
-                        <li>A structured knowledge base, delivered</li>
-                        <li>Organized by how your team actually works</li>
-                        <li>Every gotcha, trap, and "why" documented</li>
-                        <li>Decision trees your AI tools can navigate</li>
-                    </ul>
+    <main>
+        <!-- Hero -->
+        <section class="hero">
+            <div class="hero-shader" id="hero-shader-bg" aria-hidden="true"></div>
+            <div class="container">
+                <div class="logo-mark fade-in" id="logo-shader" aria-hidden="true"></div>
+                <div class="hero-badge fade-in">Accepting new clients</div>
+                <h1 class="fade-in delay-1 text-glow-strong">Your codebase knows<br>more than your team does<span class="cursor-blink"></span></h1>
+                <p class="fade-in delay-2">
+                    I extract the tribal knowledge buried in your commits and tickets
+                    into a structured knowledge base your AI tools can navigate.
+                    No interviews. No developer effort. Delivered in 5 days.
+                </p>
+                <div class="hero-cta fade-in delay-3">
+                    <a href="#contact" class="btn btn-primary">Book a free discovery call</a>
+                    <a href="#proof" class="btn">See real output</a>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <div class="line-glow"></div>
+        <div class="line-glow" aria-hidden="true"></div>
 
-    <!-- How it works -->
-    <section>
-        <div class="container">
-            <h2 class="fade-in">How it works</h2>
-            <div class="grid-3 fade-in delay-1">
-                <div class="card">
-                    <div class="step-number">01</div>
-                    <h3>You grant read-only access</h3>
-                    <p class="text-dim" style="font-size: 0.9rem;">
-                        Code repositories and issue tracker. Nothing else.
-                        No write access. No production systems. No customer data.
-                    </p>
-                </div>
-                <div class="card">
-                    <div class="step-number">02</div>
-                    <h3>I run the extraction</h3>
-                    <p class="text-dim" style="font-size: 0.9rem;">
-                        A swarm of AI agents investigates your team's resolved tickets
-                        and code changes, writing structured documentation for each finding.
-                    </p>
-                </div>
-                <div class="card">
-                    <div class="step-number">03</div>
-                    <h3>You get the knowledge base</h3>
-                    <p class="text-dim" style="font-size: 0.9rem;">
-                        Delivered as files that integrate directly into Claude Code, Cursor,
-                        or any AI coding tool. Plus a 1-hour walkthrough with your team.
-                    </p>
+        <!-- Problem -->
+        <section aria-labelledby="problem-heading">
+            <div class="container">
+                <h2 class="fade-in" id="problem-heading">The knowledge loss nobody budgets for</h2>
+                <p class="fade-in delay-1" style="font-size: 1.125rem; color: var(--text-primary); max-width: 700px;">
+                    Your senior devs carry a decade of context in their heads.
+                    When they leave, that context walks out the door.
+                    When they're on vacation, the team slows to a crawl.
+                    When a new hire joins, onboarding takes months instead of weeks.
+                </p>
+                <p class="fade-in delay-2" style="margin-top: 1.5rem;">
+                    Wikis don't fix this. Your Confluence pages from 2021 describe a system
+                    that no longer exists. <span class="text-terminal">The knowledge isn't lost &mdash; it's buried in
+                    thousands of tickets and commits that no human has time to read.</span>
+                </p>
+            </div>
+        </section>
+
+        <div class="line-glow" aria-hidden="true"></div>
+
+        <!-- What I deliver (Not/Is) -->
+        <section aria-labelledby="deliver-heading">
+            <div class="container">
+                <h2 class="fade-in" id="deliver-heading">A knowledge base, not another tool to maintain</h2>
+                <div class="not-is-grid fade-in delay-1">
+                    <div>
+                        <h3 style="color: var(--text-dim); margin-bottom: 1.5rem;">Not this:</h3>
+                        <ul class="not-list">
+                            <li>A tool you have to learn and maintain</li>
+                            <li>Auto-generated docs nobody reads</li>
+                            <li>A chatbot that hallucinates about your code</li>
+                            <li>Weeks of developer interviews</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="color: var(--amber-terminal); margin-bottom: 1.5rem;">This:</h3>
+                        <ul class="is-list">
+                            <li>A structured knowledge base, delivered to you</li>
+                            <li>Organized by how your team actually works</li>
+                            <li>Every gotcha, trap, and "why" documented</li>
+                            <li>Decision trees your AI tools can navigate</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-            <p class="fade-in delay-2" style="margin-top: 2rem; text-align: center;">
-                <span class="text-terminal">Total time: 3-5 business days. Zero effort from your developers.</span>
-            </p>
-        </div>
-    </section>
+        </section>
 
-    <div class="line-glow"></div>
+        <div class="line-glow" aria-hidden="true"></div>
 
-    <!-- Proof -->
-    <section id="proof">
-        <div class="container">
-            <h2 class="fade-in">Proof: Nextcloud Server</h2>
-            <p class="fade-in delay-1">
-                I ran this on Nextcloud — 2M+ lines of PHP/JS/C++ across 7 repositories,
-                800+ contributors, 15+ years of history. The kind of codebase where only
-                3 people know how the sharing layer actually works.
-            </p>
-            <div class="stat-grid fade-in delay-2" style="margin: 3rem 0;">
-                <div>
-                    <div class="stat-value">21</div>
-                    <div class="stat-label">process domains</div>
+        <!-- How it works -->
+        <section id="how" aria-labelledby="how-heading">
+            <div class="container">
+                <h2 class="fade-in" id="how-heading">Three steps. Zero effort from your team.</h2>
+                <div class="grid-3 fade-in delay-1">
+                    <div class="card">
+                        <div class="step-number">01</div>
+                        <h3>Grant read-only access</h3>
+                        <p class="text-dim" style="font-size: 0.9rem;">
+                            Code repositories and issue tracker. Nothing else.
+                            No write access. No production systems. No customer data.
+                        </p>
+                    </div>
+                    <div class="card">
+                        <div class="step-number">02</div>
+                        <h3>AI agents run overnight</h3>
+                        <p class="text-dim" style="font-size: 0.9rem;">
+                            A swarm of AI agents investigates your resolved tickets
+                            and code changes, extracting structured documentation for each finding.
+                        </p>
+                    </div>
+                    <div class="card">
+                        <div class="step-number">03</div>
+                        <h3>Get your knowledge base</h3>
+                        <p class="text-dim" style="font-size: 0.9rem;">
+                            Delivered as files that plug directly into Claude Code, Cursor,
+                            or any AI coding tool. Plus a 1-hour walkthrough with your team.
+                        </p>
+                    </div>
                 </div>
-                <div>
-                    <div class="stat-value">98</div>
-                    <div class="stat-label">reference files</div>
-                </div>
-                <div>
-                    <div class="stat-value">~100</div>
-                    <div class="stat-label">gotchas documented</div>
-                </div>
-                <div>
-                    <div class="stat-value">252</div>
-                    <div class="stat-label">routing entries</div>
-                </div>
+                <p class="fade-in delay-2" style="margin-top: 2rem; text-align: center;">
+                    <span class="text-terminal">Delivered in 3&ndash;5 business days. Your developers don't lift a finger.</span>
+                </p>
             </div>
+        </section>
 
-            <p class="fade-in delay-2" style="font-size: 0.95rem; margin-bottom: 1.5rem;">
-                Here's what a decision tree looks like — this is the real output:
-            </p>
+        <div class="line-glow" aria-hidden="true"></div>
 
-            <div class="terminal-block fade-in delay-2"><span class="comment"># "How does the propagator prevent deadlocks?"</span>
+        <!-- Proof -->
+        <section id="proof" aria-labelledby="proof-heading">
+            <div class="container">
+                <h2 class="fade-in" id="proof-heading">Real output: Nextcloud Server</h2>
+                <p class="fade-in delay-1">
+                    I ran this on Nextcloud &mdash; 2M+ lines of PHP/JS/C++ across 7 repositories,
+                    800+ contributors, 15+ years of history. The kind of codebase where only
+                    3 people know how the sharing layer actually works.
+                </p>
+                <div class="stat-grid fade-in delay-2" style="margin: 3rem 0;">
+                    <div>
+                        <div class="stat-value">21</div>
+                        <div class="stat-label">process domains</div>
+                    </div>
+                    <div>
+                        <div class="stat-value">98</div>
+                        <div class="stat-label">reference files</div>
+                    </div>
+                    <div>
+                        <div class="stat-value">~100</div>
+                        <div class="stat-label">gotchas documented</div>
+                    </div>
+                    <div>
+                        <div class="stat-value">252</div>
+                        <div class="stat-label">routing entries</div>
+                    </div>
+                </div>
+
+                <p class="fade-in delay-2" style="font-size: 0.95rem; margin-bottom: 1.5rem;">
+                    Here's what a decision tree looks like &mdash; this is the real output:
+                </p>
+
+                <div class="terminal-window fade-in delay-2">
+                    <div class="terminal-titlebar">
+                        <span class="terminal-dot"></span>
+                        <span class="terminal-dot"></span>
+                        <span class="terminal-dot"></span>
+                        <span class="terminal-title">knowledge-base/decision-tree.md</span>
+                    </div>
+                    <div class="terminal-block"><span class="comment"># "How does the propagator prevent deadlocks?"</span>
 <span class="comment">#</span>
 <span class="comment"># Without knowledge base:</span>
 <span class="comment">#   Claude explored the codebase and described the desktop</span>
@@ -578,141 +864,215 @@
 <span class="arrow">  ├─</span> Reshare rename or move errors      <span class="arrow">→</span> <span class="path">gotchas.md</span>
 <span class="arrow">  ├─</span> Pending share performance          <span class="arrow">→</span> <span class="path">gotchas.md</span>
 <span class="arrow">  └─</span> Share permissions bitmask           <span class="arrow">→</span> <span class="path">api.md</span></div>
-
-            <div class="proof-quote fade-in delay-3">
-                The value isn't fewer tokens — it's not confidently delivering the wrong answer.
-                An AI that finds something plausible-sounding in a 2M-line codebase is worse than
-                one that admits it doesn't know.
-            </div>
-        </div>
-    </section>
-
-    <div class="line-glow"></div>
-
-    <!-- Why this works -->
-    <section>
-        <div class="container">
-            <h2 class="fade-in">Why it matters</h2>
-            <div class="fade-in delay-1">
-                <div class="benefit-item">
-                    <span class="benefit-number">01</span>
-                    <div>
-                        <p style="color: var(--text-primary); margin-bottom: 0.25rem;"><strong>Onboarding in weeks, not months</strong></p>
-                        <p class="text-dim" style="font-size: 0.9rem;">New hires navigate the codebase from day one. Not because they read everything — because the knowledge base tells them exactly where to look.</p>
-                    </div>
                 </div>
-                <div class="benefit-item">
-                    <span class="benefit-number">02</span>
-                    <div>
-                        <p style="color: var(--text-primary); margin-bottom: 0.25rem;"><strong>Bus factor insurance</strong></p>
-                        <p class="text-dim" style="font-size: 0.9rem;">The tribal knowledge that lives in 3 people's heads gets documented, structured, and searchable. People can still leave — the knowledge stays.</p>
-                    </div>
+
+                <div class="proof-quote fade-in delay-3">
+                    The value isn't fewer tokens &mdash; it's not confidently delivering the wrong answer.
+                    An AI that finds something plausible-sounding in a 2M-line codebase is worse than
+                    one that admits it doesn't know.
                 </div>
-                <div class="benefit-item">
-                    <span class="benefit-number">03</span>
-                    <div>
-                        <p style="color: var(--text-primary); margin-bottom: 0.25rem;"><strong>AI tools that actually work on your code</strong></p>
-                        <p class="text-dim" style="font-size: 0.9rem;">Copilot and Claude are great at generic code. They're useless for "why does this module have that weird retry logic." The knowledge base fills that gap.</p>
-                    </div>
-                </div>
-                <div class="benefit-item">
-                    <span class="benefit-number">04</span>
-                    <div>
-                        <p style="color: var(--text-primary); margin-bottom: 0.25rem;"><strong>Self-maintaining</strong></p>
-                        <p class="text-dim" style="font-size: 0.9rem;">The extraction runs again periodically. New features, new patterns, new contributors — they get captured automatically. Optional monthly refresh.</p>
-                    </div>
+
+                <div class="inline-cta fade-in delay-3">
+                    <a href="#contact" class="btn btn-primary">See what this looks like for your codebase</a>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <div class="line-glow"></div>
+        <div class="line-glow" aria-hidden="true"></div>
 
-    <!-- Who this is for -->
-    <section>
-        <div class="container">
-            <h2 class="fade-in">Best fit</h2>
-            <div class="grid-2 fade-in delay-1">
-                <div class="card">
-                    <h3>Your codebase</h3>
-                    <ul>
-                        <li>3+ years old</li>
-                        <li>Multiple repositories</li>
-                        <li>PHP, Python, Java, JS, Go, C#, or C++</li>
-                        <li>GitHub, GitLab, or Bitbucket</li>
-                        <li>Jira, GitHub Issues, or GitLab Issues</li>
-                    </ul>
-                </div>
-                <div class="card">
-                    <h3>Your team</h3>
-                    <ul>
-                        <li>Onboarding takes too long</li>
-                        <li>Key people hold too much context</li>
-                        <li>The wiki is outdated or nonexistent</li>
-                        <li>AI tools don't understand your domain</li>
-                        <li>You've lost someone recently and felt it</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <div class="line-glow"></div>
-
-    <!-- Pricing signal -->
-    <section>
-        <div class="container">
-            <h2 class="fade-in">Engagement</h2>
-            <div class="grid-2 fade-in delay-1">
-                <div class="card">
-                    <h3 style="color: var(--amber-terminal);">Initial extraction</h3>
-                    <p style="font-size: 0.9rem;">
-                        Full knowledge base delivered in 5 business days.
-                        Includes 1-hour walkthrough with your team.
-                    </p>
-                    <p style="font-size: 0.9rem; color: var(--text-dim);">
-                        Fixed price based on codebase size. Typical range: 5,000-10,000 EUR.
-                    </p>
-                </div>
-                <div class="card">
-                    <h3 style="color: var(--amber-terminal);">Monthly refresh</h3>
-                    <p style="font-size: 0.9rem;">
-                        Re-run the extraction monthly to capture new knowledge
-                        from recent development activity. Cancel anytime.
-                    </p>
-                    <p style="font-size: 0.9rem; color: var(--text-dim);">
-                        500-1,000 EUR/month.
-                    </p>
+        <!-- Benefits -->
+        <section aria-labelledby="benefits-heading">
+            <div class="container">
+                <h2 class="fade-in" id="benefits-heading">What changes after delivery</h2>
+                <div class="fade-in delay-1">
+                    <div class="benefit-item">
+                        <span class="benefit-number">01</span>
+                        <div>
+                            <p style="color: var(--text-primary); margin-bottom: 0.25rem;"><strong>New hires navigate the codebase from day one</strong></p>
+                            <p class="text-dim" style="font-size: 0.9rem;">Not because they read everything &mdash; because the knowledge base tells them exactly where to look. Onboarding drops from months to weeks.</p>
+                        </div>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="benefit-number">02</span>
+                        <div>
+                            <p style="color: var(--text-primary); margin-bottom: 0.25rem;"><strong>Key-person departures stop being emergencies</strong></p>
+                            <p class="text-dim" style="font-size: 0.9rem;">The tribal knowledge that lives in 3 people's heads gets documented, structured, and searchable. People can still leave &mdash; the knowledge stays.</p>
+                        </div>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="benefit-number">03</span>
+                        <div>
+                            <p style="color: var(--text-primary); margin-bottom: 0.25rem;"><strong>AI coding tools that understand your domain</strong></p>
+                            <p class="text-dim" style="font-size: 0.9rem;">Copilot and Claude are great at generic code. They fail at "why does this module have that weird retry logic." The knowledge base fills that gap.</p>
+                        </div>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="benefit-number">04</span>
+                        <div>
+                            <p style="color: var(--text-primary); margin-bottom: 0.25rem;"><strong>Knowledge that stays current automatically</strong></p>
+                            <p class="text-dim" style="font-size: 0.9rem;">Optional monthly refresh re-runs the extraction. New features, new patterns, new contributors &mdash; captured without manual effort.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <p class="fade-in delay-2" style="margin-top: 2rem; text-align: center; font-size: 0.9rem; color: var(--text-dim);">
-                Comparable manual documentation would cost 20-40k EUR and take 2-3 months.
-            </p>
-        </div>
-    </section>
+        </section>
 
-    <div class="line-glow"></div>
+        <div class="line-glow" aria-hidden="true"></div>
 
-    <!-- CTA -->
-    <section id="contact">
-        <div class="container">
-            <div class="card cta-box fade-in">
-                <h2>Let's talk</h2>
-                <p>
-                    30-minute call. I'll ask about your codebase, your team's pain points,
-                    and whether this is a fit. No pitch deck. No sales pressure.
-                </p>
-                <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
-                    <a href="mailto:knowledge@troneras.com?subject=Knowledge%20Engine%20—%20Discovery%20Call" class="btn btn-primary">
-                        knowledge@troneras.com
-                    </a>
+        <!-- Best fit -->
+        <section aria-labelledby="fit-heading">
+            <div class="container">
+                <h2 class="fade-in" id="fit-heading">Is this a fit?</h2>
+                <div class="grid-2 fade-in delay-1">
+                    <div class="card">
+                        <h3>Your codebase</h3>
+                        <ul>
+                            <li>3+ years of history</li>
+                            <li>Multiple repositories</li>
+                            <li>PHP, Python, Java, JavaScript, Go, C#, or C++</li>
+                            <li>GitHub, GitLab, or Bitbucket</li>
+                            <li>Jira, GitHub Issues, or GitLab Issues</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>Your situation</h3>
+                        <ul>
+                            <li>Onboarding takes longer than it should</li>
+                            <li>Too much context lives in too few heads</li>
+                            <li>The wiki is outdated or nonexistent</li>
+                            <li>AI tools don't understand your domain</li>
+                            <li>You've lost someone recently and felt it</li>
+                        </ul>
+                    </div>
                 </div>
-                <p style="margin-top: 1.5rem; font-size: 0.85rem; color: var(--text-dim);">
-                    Or connect on <a href="https://linkedin.com/in/troneras" style="color: var(--amber-terminal); text-decoration: none;">LinkedIn</a>
+            </div>
+        </section>
+
+        <div class="line-glow" aria-hidden="true"></div>
+
+        <!-- Pricing -->
+        <section id="pricing" aria-labelledby="pricing-heading">
+            <div class="container">
+                <h2 class="fade-in" id="pricing-heading">Pricing</h2>
+                <div class="grid-2 fade-in delay-1">
+                    <div class="card">
+                        <h3 style="color: var(--amber-terminal);">Initial extraction</h3>
+                        <p style="font-size: 0.9rem;">
+                            Full knowledge base delivered in 5 business days.
+                            Includes 1-hour walkthrough with your team.
+                        </p>
+                        <p style="font-size: 1.1rem; color: var(--text-primary); font-weight: 600; margin-bottom: 0.5rem;">
+                            5,000 &ndash; 10,000 EUR
+                        </p>
+                        <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0;">
+                            Fixed price based on codebase size. No surprises.
+                        </p>
+                    </div>
+                    <div class="card">
+                        <h3 style="color: var(--amber-terminal);">Monthly refresh</h3>
+                        <p style="font-size: 0.9rem;">
+                            Re-run the extraction monthly to capture new knowledge
+                            from recent development activity.
+                        </p>
+                        <p style="font-size: 1.1rem; color: var(--text-primary); font-weight: 600; margin-bottom: 0.5rem;">
+                            500 &ndash; 1,000 EUR/month
+                        </p>
+                        <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0;">
+                            Cancel anytime. No lock-in.
+                        </p>
+                    </div>
+                </div>
+                <p class="fade-in delay-2" style="margin-top: 2rem; text-align: center; font-size: 0.9rem; color: var(--text-dim);">
+                    For comparison: manual documentation costs 20&ndash;40k EUR and takes 2&ndash;3 months.
                 </p>
             </div>
-        </div>
-    </section>
+        </section>
+
+        <div class="line-glow" aria-hidden="true"></div>
+
+        <!-- FAQ -->
+        <section aria-labelledby="faq-heading">
+            <div class="container">
+                <h2 class="fade-in" id="faq-heading">Common questions</h2>
+                <div class="fade-in delay-1">
+                    <div class="faq-item">
+                        <details open>
+                            <summary>What access do you need?</summary>
+                            <div class="faq-answer">
+                                <p>Read-only access to your code repositories and issue tracker. No write access, no production systems, no customer data. I sign an NDA before receiving any access.</p>
+                            </div>
+                        </details>
+                    </div>
+                    <div class="faq-item">
+                        <details>
+                            <summary>What if the output isn't useful?</summary>
+                            <div class="faq-answer">
+                                <p>The discovery call exists to prevent that. I'll assess whether your codebase is a good fit before we sign anything. If I don't think I can deliver meaningful results, I'll tell you.</p>
+                            </div>
+                        </details>
+                    </div>
+                    <div class="faq-item">
+                        <details>
+                            <summary>Who owns the knowledge base?</summary>
+                            <div class="faq-answer">
+                                <p>You do. The knowledge base becomes your property on delivery. I keep the extraction pipeline &mdash; you keep everything it produces.</p>
+                            </div>
+                        </details>
+                    </div>
+                    <div class="faq-item">
+                        <details>
+                            <summary>Does this work with my AI tools?</summary>
+                            <div class="faq-answer">
+                                <p>The knowledge base is delivered as structured Markdown files that integrate directly into Claude Code, Cursor, GitHub Copilot, Windsurf, or any AI tool that reads project context files.</p>
+                            </div>
+                        </details>
+                    </div>
+                    <div class="faq-item">
+                        <details>
+                            <summary>What languages and platforms do you support?</summary>
+                            <div class="faq-answer">
+                                <p>PHP, Python, Java, JavaScript/TypeScript, Go, C#, and C++. Repositories on GitHub, GitLab, or Bitbucket. Issue trackers: Jira, GitHub Issues, GitLab Issues.</p>
+                            </div>
+                        </details>
+                    </div>
+                    <div class="faq-item">
+                        <details>
+                            <summary>How is this different from AI-generated docs?</summary>
+                            <div class="faq-answer">
+                                <p>AI doc generators describe what code does. This extracts why it does it &mdash; the decisions, gotchas, and tribal knowledge buried in years of tickets and commit messages. It's the difference between a function signature and the story of why that function exists.</p>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="line-glow" aria-hidden="true"></div>
+
+        <!-- CTA -->
+        <section id="contact" aria-labelledby="cta-heading">
+            <div class="container">
+                <div class="card cta-box fade-in">
+                    <h2 id="cta-heading">Find out what your codebase knows</h2>
+                    <p>
+                        30-minute discovery call. I'll ask about your codebase, your team,
+                        and whether this is a fit. No pitch deck. No sales pressure.
+                    </p>
+                    <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                        <a href="mailto:knowledge@troneras.com?subject=Knowledge%20Engine%20%E2%80%94%20Discovery%20Call" class="btn btn-primary">
+                            Book a free discovery call
+                        </a>
+                    </div>
+                    <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-dim);">
+                        knowledge@troneras.com &middot; <a href="https://linkedin.com/in/troneras" style="color: var(--amber-terminal); text-decoration: none;">LinkedIn</a>
+                    </p>
+                    <p style="margin-top: 1.5rem; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0;">
+                        Currently accepting 2 new clients per month.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <!-- Footer -->
     <footer>
@@ -725,6 +1085,7 @@
     </footer>
 
     <script>
+        // Intersection observer for fade-in animations
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -734,12 +1095,66 @@
         }, { root: null, rootMargin: '0px', threshold: 0.1 });
 
         document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Show nav on scroll past hero
+        const nav = document.getElementById('site-nav');
+        const heroSection = document.querySelector('.hero');
+
+        const navObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) {
+                    nav.classList.add('visible');
+                } else {
+                    nav.classList.remove('visible');
+                }
+            });
+        }, { root: null, rootMargin: '0px', threshold: 0 });
+
+        navObserver.observe(heroSection);
+
+        // Scroll progress bar
+        const progressBar = document.getElementById('scroll-progress');
+        window.addEventListener('scroll', () => {
+            const scrollTop = document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const progress = (scrollTop / scrollHeight) * 100;
+            progressBar.style.width = progress + '%';
+        }, { passive: true });
+
+        // Stat counter animation
+        const statValues = document.querySelectorAll('.stat-value');
+        const statObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.dataset.counted) {
+                    entry.target.dataset.counted = 'true';
+                    const text = entry.target.textContent.trim();
+                    const hasPrefix = text.startsWith('~');
+                    const num = parseInt(text.replace(/[^0-9]/g, ''), 10);
+                    const duration = 1200;
+                    const start = performance.now();
+
+                    function tick(now) {
+                        const elapsed = now - start;
+                        const t = Math.min(elapsed / duration, 1);
+                        // ease-out cubic
+                        const eased = 1 - Math.pow(1 - t, 3);
+                        const current = Math.round(eased * num);
+                        entry.target.textContent = (hasPrefix ? '~' : '') + current;
+                        if (t < 1) requestAnimationFrame(tick);
+                    }
+
+                    entry.target.textContent = hasPrefix ? '~0' : '0';
+                    requestAnimationFrame(tick);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        statValues.forEach(el => statObserver.observe(el));
     </script>
 
     <script type="module">
         import { ShaderMount, neuroNoiseFragmentShader } from 'https://cdn.jsdelivr.net/npm/@paper-design/shaders@0.0.71/dist/index.js';
 
-        // Convert hex to [r, g, b, a] in 0-1 range
         function hexToVec4(hex, alpha = 1) {
             const r = parseInt(hex.slice(1, 3), 16) / 255;
             const g = parseInt(hex.slice(3, 5), 16) / 255;
@@ -755,7 +1170,7 @@
         const heroBg = document.getElementById('hero-shader-bg');
         if (heroBg) {
             try {
-                const bgShader = new ShaderMount(
+                new ShaderMount(
                     heroBg,
                     neuroNoiseFragmentShader,
                     {
@@ -766,7 +1181,7 @@
                         u_contrast: 1.2,
                     },
                     { alpha: true, premultipliedAlpha: false },
-                    0.4  // slow animation speed
+                    0.4
                 );
             } catch (e) {
                 console.warn('Shader not supported:', e);
@@ -778,7 +1193,7 @@
         const logoEl = document.getElementById('logo-shader');
         if (logoEl) {
             try {
-                const logoShader = new ShaderMount(
+                new ShaderMount(
                     logoEl,
                     neuroNoiseFragmentShader,
                     {
@@ -789,7 +1204,7 @@
                         u_contrast: 1.5,
                     },
                     { alpha: true, premultipliedAlpha: false },
-                    0.6  // slightly faster for logo
+                    0.6
                 );
             } catch (e) {
                 console.warn('Logo shader not supported:', e);
